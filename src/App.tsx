@@ -1,24 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { useTodoContext, TodoStatus } from "./context/todo";
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
+  const [input, setInput] = useState("");
+  const { todos, addTodo, deleteTodo, toggleTodo } = useTodoContext();
+
+  const handleAddTodo = () => {
+    if (!input) {
+      return;
+    }
+    addTodo(input);
+    setInput("");
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        type="text"
+      />
+      <button onClick={handleAddTodo}>Add Todo</button>
+      <ul>
+        {todos.map((todo, index) => (
+          <li>
+            <input
+              onClick={() => toggleTodo(index)}
+              checked={todo.status === TodoStatus.DONE}
+              type="radio"
+            />
+            <span
+              style={{
+                textDecoration:
+                  todo.status === TodoStatus.DONE ? "line-through" : "unset",
+              }}
+            >
+              {todo.name}
+            </span>
+            <button onClick={() => deleteTodo(index)}>X</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
